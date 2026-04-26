@@ -1,0 +1,72 @@
+\documentclass{article}
+\usepackage{czt}
+\begin{document}
+
+\section*{Smart Railway Crossing Control System (SRCCS) - Z Specification}
+
+\begin{zed}
+  SystemState ::= Idle | Approaching | Closed | Emergency
+\end{zed}
+
+\begin{zed}
+  BarrierState ::= Open | ClosedBarrier
+\end{zed}
+
+\begin{zed}
+  TrainState ::= Present | NotPresent
+\end{zed}
+
+\begin{schema}{SRCCS}
+  state : SystemState \\
+  barrier : BarrierState \\
+  train : TrainState
+\where
+  \text{safety invariant: if a train is present, the barrier MUST NOT be open} \\
+  train = Present \implies barrier = ClosedBarrier \\
+  \\
+  \text{If state is Approaching or Closed, the train is present} \\
+  state \in \{Approaching, Closed\} \implies train = Present \\
+  \\
+  \text{If state is Idle, train is not present and barrier is open} \\
+  state = Idle \implies train = NotPresent \land barrier = Open \\
+  \\
+  \text{If state is Emergency, the barrier must be closed} \\
+  state = Emergency \implies barrier = ClosedBarrier
+\end{schema}
+
+\begin{schema}{InitSRCCS}
+  SRCCS'
+\where
+  state' = Idle \\
+  barrier' = Open \\
+  train' = NotPresent
+\end{schema}
+
+\begin{schema}{TrainDetected}
+  \Delta SRCCS
+\where
+  state = Idle \\
+  train' = Present \\
+  barrier' = ClosedBarrier \\
+  state' = Approaching
+\end{schema}
+
+\begin{schema}{TrainPasses}
+  \Delta SRCCS
+\where
+  state \in \{Approaching, Closed\} \\
+  train' = NotPresent \\
+  barrier' = Open \\
+  state' = Idle
+\end{schema}
+
+\begin{schema}{TriggerEmergency}
+  \Delta SRCCS
+\where
+  state \neq Emergency \\
+  state' = Emergency \\
+  barrier' = ClosedBarrier \\
+  train' = train
+\end{schema}
+
+\end{document}

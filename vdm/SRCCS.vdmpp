@@ -1,0 +1,45 @@
+class SRCCS
+types
+  public BarrierState = <OPEN> | <CLOSED>;
+  
+instance variables
+  public barrier : BarrierState := <OPEN>;
+  public trainDetected : bool := false;
+  
+  -- Safety Invariant: "No train is allowed to pass while the barrier is open"
+  -- Equivalently: If a train is detected, the barrier MUST be CLOSED.
+  inv trainDetected => barrier = <CLOSED>;
+
+operations
+  -- Constructor
+  public SRCCS: () ==> SRCCS
+  SRCCS() == (
+    barrier := <OPEN>;
+    trainDetected := false;
+  );
+
+  -- detectTrain checks the distance and triggers the barrier control
+  public detectTrain: real ==> ()
+  detectTrain(distance) ==
+    if distance <= 2000.0 then
+      (
+        trainDetected := true;
+        controlBarrier(true)
+      )
+    else
+      (
+        trainDetected := false;
+        controlBarrier(false)
+      )
+    pre distance >= 0.0;
+
+  -- controlBarrier sets the barrier state according to domain logic
+  public controlBarrier: bool ==> ()
+  controlBarrier(isDetected) ==
+    if isDetected then
+      barrier := <CLOSED>
+    else
+      barrier := <OPEN>
+    post (barrier = <CLOSED> <=> isDetected);
+
+end SRCCS
