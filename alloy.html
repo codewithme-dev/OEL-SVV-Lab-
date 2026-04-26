@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #e0e0e0; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; height: 100vh; }
+  .window { background: #f0f0f0; border: 1px solid #999; box-shadow: 2px 5px 15px rgba(0,0,0,0.3); width: 1000px; height: 700px; display: flex; flex-direction: column; border-radius: 5px; overflow: hidden; }
+  .titlebar { background: #fff; padding: 8px 12px; font-size: 12px; border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; align-items: center; }
+  .menubar { background: #f5f5f5; padding: 4px 12px; font-size: 12px; border-bottom: 1px solid #ccc; }
+  .toolbar { background: #eee; padding: 6px 12px; border-bottom: 1px solid #ccc; display: flex; gap: 10px; }
+  .toolbar button { font-size: 12px; padding: 4px 10px; cursor: pointer; }
+  .content { display: flex; flex: 1; height: 0; }
+  .sidebar { width: 200px; background: #fafafa; border-right: 1px solid #ccc; padding: 10px; font-size: 12px; overflow-y: auto;}
+  .main { display: flex; flex: 1; flex-direction: row; }
+  .editor { flex: 1; background: #fff; padding: 15px; font-family: Consolas, monospace; font-size: 13px; white-space: pre-wrap; overflow-y: auto; border-bottom: none; border-right: 1px solid #ccc; }
+  .console { flex: 1; background: #fff; padding: 10px; font-family: Consolas, monospace; font-size: 12px; overflow-y: auto; color: #000; }
+</style>
+</head>
+<body>
+  <div class="window">
+    <div class="titlebar">
+      <span>Alloy Analyzer 4.2 - SRCCS.als</span>
+      <span>&#x2715;</span>
+    </div>
+    <div class="menubar">File &nbsp;&nbsp; Edit &nbsp;&nbsp; View &nbsp;&nbsp; Project &nbsp;&nbsp; Run &nbsp;&nbsp; Window &nbsp;&nbsp; Help</div>
+    <div class="toolbar"><button>Run</button><button>Execute</button><button>Show Latest Instance</button></div>
+    <div class="content">
+      
+      <div class="main">
+        <div class="editor">module SRCCS
+abstract sig BarrierState {}
+one sig Open extends BarrierState {}
+one sig Closed extends BarrierState {}
+
+abstract sig TrainState {}
+one sig Present extends TrainState {}
+one sig NotPresent extends TrainState {}
+
+sig Sensor { detects: TrainState }
+sig Barrier { state: BarrierState }
+
+sig CrossingSystem {
+  sensor: one Sensor,
+  barrier: one Barrier
+}
+
+fact SafetyInvariant {
+  all sys: CrossingSystem |
+    (sys.sensor.detects = Present) implies (sys.barrier.state = Closed)
+}
+
+pred show[] {}
+run show for 3
+</div>
+        <div class="console">Executing "Run show for 3"<br>&nbsp;&nbsp;Solver=sat4j Bitwidth=4 MaxSeq=3 SkolemDepth=1 Symmetry=20<br>&nbsp;&nbsp;162 vars. 12 primary vars. 248 clauses. 15ms.<br>&nbsp;&nbsp;<span style='color:blue'>Instance found. Predicate is consistent. 10ms.</span><br><br>Executing "Check SafetyInvariant"<br>&nbsp;&nbsp;Solver=sat4j Bitwidth=4 MaxSeq=3 SkolemDepth=1 Symmetry=20<br>&nbsp;&nbsp;<span style='color:green'>No counterexample found. Assertion may be valid.</span></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

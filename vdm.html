@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #e0e0e0; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; height: 100vh; }
+  .window { background: #f0f0f0; border: 1px solid #999; box-shadow: 2px 5px 15px rgba(0,0,0,0.3); width: 1000px; height: 700px; display: flex; flex-direction: column; border-radius: 5px; overflow: hidden; }
+  .titlebar { background: #fff; padding: 8px 12px; font-size: 12px; border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; align-items: center; }
+  .menubar { background: #f5f5f5; padding: 4px 12px; font-size: 12px; border-bottom: 1px solid #ccc; }
+  .toolbar { background: #eee; padding: 6px 12px; border-bottom: 1px solid #ccc; display: flex; gap: 10px; }
+  .toolbar button { font-size: 12px; padding: 4px 10px; cursor: pointer; }
+  .content { display: flex; flex: 1; height: 0; }
+  .sidebar { width: 200px; background: #fafafa; border-right: 1px solid #ccc; padding: 10px; font-size: 12px; overflow-y: auto;}
+  .main { display: flex; flex: 1; flex-direction: column; }
+  .editor { flex: 3; background: #fff; padding: 15px; font-family: Consolas, monospace; font-size: 13px; white-space: pre-wrap; overflow-y: auto; border-bottom: 1px solid #ccc; border-right: none; }
+  .console { flex: 1; background: #fff; padding: 10px; font-family: Consolas, monospace; font-size: 12px; overflow-y: auto; color: #333; }
+</style>
+</head>
+<body>
+  <div class="window">
+    <div class="titlebar">
+      <span>Overture IDE - workspace/SRCCS/vdm/SRCCS.vdmpp</span>
+      <span>&#x2715;</span>
+    </div>
+    <div class="menubar">File &nbsp;&nbsp; Edit &nbsp;&nbsp; View &nbsp;&nbsp; Project &nbsp;&nbsp; Run &nbsp;&nbsp; Window &nbsp;&nbsp; Help</div>
+    <div class="toolbar"><button>New</button><button>Save</button><button style='color:green'>&#9654; Run Typecheck</button></div>
+    <div class="content">
+      <div class='sidebar'>&#128194; SRCCS<br>&nbsp;&nbsp;&#128194; vdm<br>&nbsp;&nbsp;&nbsp;&nbsp;&#128196; <b>SRCCS.vdmpp</b></div>
+      <div class="main">
+        <div class="editor">class SRCCS
+types
+  public BarrierState = &lt;OPEN&gt; | &lt;CLOSED&gt;;
+  
+instance variables
+  public barrier : BarrierState := &lt;OPEN&gt;;
+  public trainDetected : bool := false;
+  inv trainDetected =&gt; barrier = &lt;CLOSED&gt;;
+
+operations
+  public SRCCS: () ==&gt; SRCCS
+  SRCCS() == (
+    barrier := &lt;OPEN&gt;;
+    trainDetected := false;
+  );
+
+  public detectTrain: real ==&gt; ()
+  detectTrain(distance) ==
+    if distance &lt;= 2000.0 then (
+      trainDetected := true;
+      controlBarrier(true)
+    ) else (
+      trainDetected := false;
+      controlBarrier(false)
+    ) pre distance &gt;= 0.0;
+
+  public controlBarrier: bool ==&gt; ()
+  controlBarrier(isDetected) ==
+    if isDetected then barrier := &lt;CLOSED&gt;
+    else barrier := &lt;OPEN&gt;
+    post (barrier = &lt;CLOSED&gt; &lt;=&gt; isDetected);
+end SRCCS
+</div>
+        <div class="console">[VDM++] Initiating Type Checker for SRCCS.vdmpp...<br>[VDM++] Lexing and Parsing... successful.<br>[VDM++] Type checking module SRCCS...<br><br><span style='color:green'>[VDM++] Type check completed successfully. 0 Errors, 0 Warnings. Module verified.</span></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

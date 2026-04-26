@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #e0e0e0; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; height: 100vh; }
+  .window { background: #f0f0f0; border: 1px solid #999; box-shadow: 2px 5px 15px rgba(0,0,0,0.3); width: 1000px; height: 700px; display: flex; flex-direction: column; border-radius: 5px; overflow: hidden; }
+  .titlebar { background: #fff; padding: 8px 12px; font-size: 12px; border-bottom: 1px solid #ccc; display: flex; justify-content: space-between; align-items: center; }
+  .menubar { background: #f5f5f5; padding: 4px 12px; font-size: 12px; border-bottom: 1px solid #ccc; }
+  .toolbar { background: #eee; padding: 6px 12px; border-bottom: 1px solid #ccc; display: flex; gap: 10px; }
+  .toolbar button { font-size: 12px; padding: 4px 10px; cursor: pointer; }
+  .content { display: flex; flex: 1; height: 0; }
+  .sidebar { width: 200px; background: #fafafa; border-right: 1px solid #ccc; padding: 10px; font-size: 12px; overflow-y: auto;}
+  .main { display: flex; flex: 1; flex-direction: column; }
+  .editor { flex: 3; background: #fff; padding: 15px; font-family: Consolas, monospace; font-size: 13px; white-space: pre-wrap; overflow-y: auto; border-bottom: 1px solid #ccc; border-right: none; }
+  .console { flex: 1; background: #fff; padding: 10px; font-family: Consolas, monospace; font-size: 12px; overflow-y: auto; color: #333; }
+</style>
+</head>
+<body>
+  <div class="window">
+    <div class="titlebar">
+      <span>Community Z Tools (CZT) - SRCCS.tex</span>
+      <span>&#x2715;</span>
+    </div>
+    <div class="menubar">File &nbsp;&nbsp; Edit &nbsp;&nbsp; View &nbsp;&nbsp; Project &nbsp;&nbsp; Run &nbsp;&nbsp; Window &nbsp;&nbsp; Help</div>
+    <div class="toolbar"><button>Save</button><button>Build</button><button>Run Z/EVES</button></div>
+    <div class="content">
+      <div class='sidebar'>&#128194; Z-Project<br>&nbsp;&nbsp;&#128196; <b>SRCCS.tex</b></div>
+      <div class="main">
+        <div class="editor">\documentclass{article}
+\usepackage{czt}
+\begin{document}
+
+\begin{zed}
+  SystemState ::= Idle | Approaching | Closed | Emergency
+\end{zed}
+
+\begin{zed}
+  BarrierState ::= Open | ClosedBarrier
+\end{zed}
+
+\begin{zed}
+  TrainState ::= Present | NotPresent
+\end{zed}
+
+\begin{schema}{SRCCS}
+  state : SystemState \\
+  barrier : BarrierState \\
+  train : TrainState
+\where
+  train = Present \implies barrier = ClosedBarrier \\
+  state \in \{Approaching, Closed\} \implies train = Present \\
+  state = Idle \implies train = NotPresent \land barrier = Open
+\end{schema}
+
+\end{document}
+</div>
+        <div class="console">Running CZT parser on SRCCS.tex...<br>Line 1: Document starts<br>Line 5: Schema parsed: SystemState<br>Line 9: Schema parsed: BarrierState<br>Line 13: Schema parsed: TrainState<br>Line 17: Extracted Schema: SRCCS<br><br><span style='color:green'>BUILD SUCCESSFUL (Total time: 1.2s)<br>No syntax errors. Z Specification Validated.</span></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
